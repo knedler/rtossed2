@@ -32,9 +32,11 @@
 
 /* Entry Point */
 ENTRY(Reset_Handler)
+EXTERN(scnscb scb systick nvic itm dwt tpi coredebug mpu fpu)
 
 /* Highest address of the user mode stack */
 _estack = 0x10048000;    /* end of RAM */
+_eustack = ORIGIN(SRAM1) + LENGTH(SRAM1);
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x2000;      /* required amount of heap  */
 _Min_Stack_Size = 0x4000; /* required amount of stack */
@@ -43,7 +45,13 @@ _Min_Stack_Size = 0x4000; /* required amount of stack */
 MEMORY
 {
 FLASH (rx)      : ORIGIN = 0x08100000, LENGTH = 1024K
-RAM (xrw)      : ORIGIN = 0x10000000, LENGTH = 288K
+RAM (xrw)	: ORIGIN = 0x10000000, LENGTH = 288K
+AXIRAM (xrw)	: ORIGIN = 0x24000000, LENGTH = 512K
+SRAM1 (xrw) 	: ORIGIN = 0x30000000, LENGTH = 128K
+SRAM2 (xrw) 	: ORIGIN = 0x30020000, LENGTH = 128K
+SRAM3 (xrw) 	: ORIGIN = 0x30040000, LENGTH = 32K
+SRAM4 (xrw)	: ORIGIN = 0x38000000, LENGTH = 64K
+BRAM (xrw)	: ORIGIN = 0x38800000, LENGTH = 64K
 }
 
 /* Define output sections */
@@ -154,7 +162,15 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
-  
+  . = ALIGN(8);
+  .axi :
+  {
+    _axi_start = .;
+    *(.axi)
+    *(.axi*)
+
+    . = ALIGN(8);
+  } > AXIRAM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

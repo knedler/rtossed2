@@ -40,16 +40,56 @@
 */
 void MX_GPIO_Init(void)
 {
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	__HAL_RCC_GPIOF_CLK_ENABLE();
+	__HAL_RCC_GPIOH_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOD_CLK_ENABLE();
+	__HAL_RCC_GPIOG_CLK_ENABLE();
+	__HAL_RCC_GPIOE_CLK_ENABLE();
 
+	// LD1
+	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = LD1_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(LD1_GPIO_Port, &GPIO_InitStruct);
+
+	// LD2
+	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = LD2_Pin;
+	HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+	// LD3
+	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = LD3_Pin;
+	HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+
+	// TFT_DC
+	HAL_GPIO_WritePin(TFT_DC_GPIO_Port, TFT_DC_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = TFT_DC_Pin;
+	HAL_GPIO_Init(TFT_DC_GPIO_Port, &GPIO_InitStruct);
+
+	// TFT_RST
+	HAL_GPIO_WritePin(TFT_RST_GPIO_Port, TFT_RST_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = TFT_RST_Pin;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+	HAL_GPIO_Init(TFT_RST_GPIO_Port, &GPIO_InitStruct);
+
+	// B1
+	GPIO_InitStruct.Pin = B1_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 }
 
 /* USER CODE BEGIN 2 */

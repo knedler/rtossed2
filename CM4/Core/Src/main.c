@@ -34,7 +34,7 @@
 /* USER CODE BEGIN PD */
 
 #ifndef HSEM_ID_0
-#define HSEM_ID_0 (0U) /* HW semaphore 0*/
+#define HSEM_ID_0 (0U)		/* HW semaphore 0 */
 #endif
 
 /* USER CODE END PD */
@@ -66,53 +66,57 @@
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+	/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
 /* USER CODE BEGIN Boot_Mode_Sequence_1 */
-  /*HW semaphore Clock enable*/
-  __HAL_RCC_HSEM_CLK_ENABLE();
-  /* Activate HSEM notification for Cortex-M4*/
-  HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
-  /*
-  Domain D2 goes to STOP mode (Cortex-M4 in deep-sleep) waiting for Cortex-M7 to
-  perform system initialization (system clock config, external memory configuration.. )
-  */
-  HAL_PWREx_ClearPendingEvent();
-  HAL_PWREx_EnterSTOPMode(PWR_MAINREGULATOR_ON, PWR_STOPENTRY_WFE, PWR_D2_DOMAIN);
-  /* Clear HSEM flag */
-  __HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
+	/*HW semaphore Clock enable */
+	__HAL_RCC_HSEM_CLK_ENABLE();
+	/* Activate HSEM notification for Cortex-M4 */
+	HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
+	/*
+	   Domain D2 goes to STOP mode (Cortex-M4 in deep-sleep) waiting for Cortex-M7 to
+	   perform system initialization (system clock config, external memory configuration.. )
+	 */
+	HAL_PWREx_ClearPendingEvent();
+	HAL_PWREx_EnterSTOPMode(PWR_MAINREGULATOR_ON, PWR_STOPENTRY_WFE,
+				PWR_D2_DOMAIN);
+	/* Clear HSEM flag */
+	__HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
 
 /* USER CODE END Boot_Mode_Sequence_1 */
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration-------------------------------------------------------- */
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_MDMA_Init();
-  /* USER CODE BEGIN 2 */
+	/* Initialize all configured peripherals */
+	MX_MDMA_Init();
+	/* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
+	/* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
+	while (1) {
+		// Toggle Led 2
+		HAL_Delay(50);
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+		/* USER CODE END WHILE */
+
+		/* USER CODE BEGIN 3 */
+	}
+	/* USER CODE END 3 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -125,13 +129,12 @@ int main(void)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE BEGIN Error_Handler_Debug */
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -142,11 +145,11 @@ void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
+void assert_failed(uint8_t * file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+	/* USER CODE BEGIN 6 */
+	/* User can add his own implementation to report the file name and line number,
+	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	/* USER CODE END 6 */
 }
-#endif /* USE_FULL_ASSERT */
+#endif				/* USE_FULL_ASSERT */

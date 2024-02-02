@@ -103,7 +103,8 @@ main=	cd	Secure && $(MAKE)
 # clean up
 #######################################
 clean:
-	-rm -fR $(EXEC)
+	cd	CM4 && $(MAKE) clean
+	cd	CM7 && $(MAKE) clean
   
 #######################################
 # dependencies

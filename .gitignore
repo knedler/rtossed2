@@ -1,0 +1,5 @@
+# Ignore temp files
+*~
+*.swp
+# Igonre build dir
+build/

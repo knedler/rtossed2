@@ -47,6 +47,7 @@ C_SOURCES =  \
 ../../CM7/Core/Src/mdma.c \
 ../../CM7/Core/Src/quadspi.c \
 ../../CM7/Core/Src/tim.c \
+../../Common/Src/frame_buffer.c \
 ../../CM7/Core/Src/usart.c \
 ../../CM7/Core/Src/stm32h7xx_it.c \
 ../../CM7/Core/Src/stm32h7xx_hal_msp.c \
@@ -78,7 +79,14 @@ C_SOURCES =  \
 ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c \
 ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c \
 ../../Common/Src/system_stm32h7xx_dualcore_boot_cm4_cm7.c \
-../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c  
+../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c \
+../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c \
+../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c \
+../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c \
+../../Common/Src/graphics.c \
+../../Common/Src/glcdfont.c \
+../../CM7/Core/Src/Adafruit_ST7735.c \
+../../CM7/Core/Src/syscalls.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -91,6 +99,7 @@ ASMM_SOURCES =
 #######################################
 # binaries
 #######################################
+GCC_PATH=/usr/local/gcc-arm-none-eabi/bin
 PREFIX = arm-none-eabi-
 # The gcc compiler bin path can be either defined in make command via GCC_PATH variable (> make GCC_PATH=xxx)
 # either it can be added to the PATH environment variable.
@@ -98,6 +107,7 @@ ifdef GCC_PATH
 CC = $(GCC_PATH)/$(PREFIX)gcc
 AS = $(GCC_PATH)/$(PREFIX)gcc -x assembler-with-cpp
 CP = $(GCC_PATH)/$(PREFIX)objcopy
+OD = $(GCC_PATH)/$(PREFIX)objdump
 SZ = $(GCC_PATH)/$(PREFIX)size
 else
 CC = $(PREFIX)gcc
@@ -147,7 +157,8 @@ C_INCLUDES =  \
 -I../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc \
 -I../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc \
 -I../../Drivers/CMSIS/Device/ST/STM32H7xx/Include \
--I../../Drivers/CMSIS/Include
+-I../../Drivers/CMSIS/Include \
+-I../../Common/Inc
 
 
 # compile gcc flags
@@ -207,7 +218,10 @@ $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	$(HEX) $< $@
 	
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(BIN) $< $@	
+	$(BIN) $< $@
+
+$(BUILD_DIR)/%.asm: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+	$(OD) -d $< > $@
 	
 $(BUILD_DIR):
 	mkdir $@		
