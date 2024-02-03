@@ -142,15 +142,11 @@ int _lseek(int file, int ptr, int dir)
 	return 0;
 }
 
-int _read(int file, char *ptr, int len)
+int _read(int fd, char *buf, int cnt)
 {
-	int DataIdx;
+	HAL_UART_Receive(&huart3, (uint8_t*)buf, 1, HAL_MAX_DELAY);
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++) {
-		*ptr++ = __io_getchar();
-	}
-
-	return len;
+	return 1;
 }
 
 int _open(char *path, int flags, ...)
