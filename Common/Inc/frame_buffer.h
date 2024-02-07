@@ -27,13 +27,13 @@ as well as Adafruit raw 1.8" TFT display
 #include <stdint.h>
 #include <stdbool.h>
 
-#define FRAME_BUFFER_WIDTH 128
-#define FRAME_BUFFER_HEIGHT 160
+#define FRAME_BUFFER_WIDTH 160
+#define FRAME_BUFFER_HEIGHT 128
 
 // Index into frame buffer array for (x,y)
 inline int16_t frame_buffer_idx(int16_t x, int16_t y)
 {
-	return x*FRAME_BUFFER_WIDTH+y;
+	return x*FRAME_BUFFER_HEIGHT+y;
 }
 
 extern uint16_t frame[160*128];
