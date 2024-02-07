@@ -85,7 +85,6 @@ C_SOURCES =  \
 ../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c \
 ../../Common/Src/graphics.c \
 ../../Common/Src/glcdfont.c \
-../../Common/Src/sh.c \
 ../../CM7/Core/Src/Adafruit_ST7735.c \
 ../../CM7/Core/Src/syscalls.c
 

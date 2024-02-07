@@ -31,8 +31,6 @@
 #include "frame_buffer.h"
 #include "graphics.h"
 
-#include "sh.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -172,7 +170,10 @@ HSEM notification */
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		shell();
+		// Toggle Led 1
+		HAL_Delay(250);
+		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
