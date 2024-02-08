@@ -112,7 +112,6 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef * tim_baseHandle)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	// Start another frame write
-	HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 	qspi_write_frame(frame);
 }
 

@@ -32,6 +32,7 @@
 #include "graphics.h"
 
 #include "sh.h"
+#include "process.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -49,6 +50,9 @@
 #ifndef HSEM_ID_0
 #define HSEM_ID_0 (0U)		/* HW semaphore 0 */
 #endif
+
+#define TRUE (1)
+#define FALSE (0)
 
 /* USER CODE END PD */
 
@@ -71,6 +75,9 @@ const TPI_Type 		*tpi 		= TPI;
 const CoreDebug_Type 	*coredebug 	= CoreDebug;
 const MPU_Type 		*mpu 		= MPU;
 const FPU_Type 		*fpu		= FPU;
+
+volatile uint8_t kready = FALSE;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,12 +99,18 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
-/* USER CODE BEGIN Boot_Mode_Sequence_0 */
-	int32_t timeout;
-/* USER CODE END Boot_Mode_Sequence_0 */
+	/* Enable I-Cache-----------------------------------------------------*/
+	//SCB_EnableICache();
 
-/* USER CODE BEGIN Boot_Mode_Sequence_1 */
+	/* Enable D-Cache-----------------------------------------------------*/
+	//SCB_EnableDCache();
+
+	/* USER CODE END 1 */
+	/* USER CODE BEGIN Boot_Mode_Sequence_0 */
+	int32_t timeout;
+	/* USER CODE END Boot_Mode_Sequence_0 */
+
+	/* USER CODE BEGIN Boot_Mode_Sequence_1 */
 	/* Wait until CPU2 boots and enters in stop mode or timeout */
 	timeout = 0xFFFF;
 	while ((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET)
@@ -105,10 +118,13 @@ int main(void)
 	if (timeout < 0) {
 		Error_Handler();
 	}
-/* USER CODE END Boot_Mode_Sequence_1 */
-	/* MCU Configuration-------------------------------------------------------- */
+	/* USER CODE END Boot_Mode_Sequence_1 */
+	/* MCU Configuration------------------------------------------------- */
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	/* Reset of all peripherals, Initializes the Flash interface and the
+	 * Systick.
+	 */
+
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
@@ -117,23 +133,25 @@ int main(void)
 
 	/* Configure the system clock */
 	SystemClock_Config();
-/* USER CODE BEGIN Boot_Mode_Sequence_2 */
-/* When system initialization is finished, Cortex-M7 will release Cortex-M4 by means of
-HSEM notification */
-/*HW semaphore Clock enable*/
+	/* USER CODE BEGIN Boot_Mode_Sequence_2 */
+	/* When system initialization is finished, Cortex-M7 will release
+	 * Cortex-M4 by means of HSEM notification
+	 */
+
+	/*HW semaphore Clock enable*/
 	__HAL_RCC_HSEM_CLK_ENABLE();
-/*Take HSEM */
+	/*Take HSEM */
 	HAL_HSEM_FastTake(HSEM_ID_0);
-/*Release HSEM in order to notify the CPU2(CM4)*/
+	/*Release HSEM in order to notify the CPU2(CM4)*/
 	HAL_HSEM_Release(HSEM_ID_0, 0);
-/* wait until CPU2 wakes up from stop mode */
+	/* wait until CPU2 wakes up from stop mode */
 	timeout = 0xFFFF;
 	while ((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET)
 	       && (timeout-- > 0)) ;
 	if (timeout < 0) {
 		Error_Handler();
 	}
-/* USER CODE END Boot_Mode_Sequence_2 */
+	/* USER CODE END Boot_Mode_Sequence_2 */
 
 	/* USER CODE BEGIN SysInit */
 
@@ -172,7 +190,11 @@ HSEM notification */
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		shell();
+		kready = TRUE;
+
+		HAL_Delay(50);
+		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -190,20 +212,20 @@ void SystemClock_Config(void)
 	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
 	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  /** Supply configuration update enable
-  */
+	/** Supply configuration update enable */
+
 	HAL_PWREx_ConfigSupply(PWR_DIRECT_SMPS_SUPPLY);
 
-  /** Configure the main internal regulator output voltage
-  */
+	/** Configure the main internal regulator output voltage */
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 	while (!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {
 	}
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+	/** Initializes the RCC Oscillators according to the specified
+	 * parameters in the RCC_OscInitTypeDef structure.
+	 */
+
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -220,8 +242,7 @@ void SystemClock_Config(void)
 		Error_Handler();
 	}
 
-		       /** Initializes the CPU, AHB and APB buses clocks
-  */
+	/** Initializes the CPU, AHB and APB buses clocks */
 	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
 	    | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2
 	    | RCC_CLOCKTYPE_D3PCLK1 | RCC_CLOCKTYPE_D1PCLK1;
