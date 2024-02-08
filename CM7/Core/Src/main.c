@@ -100,10 +100,10 @@ int main(void)
 	/* USER CODE BEGIN 1 */
 
 	/* Enable I-Cache-----------------------------------------------------*/
-	//SCB_EnableICache();
+	SCB_EnableICache();
 
 	/* Enable D-Cache-----------------------------------------------------*/
-	//SCB_EnableDCache();
+	SCB_EnableDCache();
 
 	/* USER CODE END 1 */
 	/* USER CODE BEGIN Boot_Mode_Sequence_0 */

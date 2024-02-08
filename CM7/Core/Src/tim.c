@@ -112,6 +112,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef * tim_baseHandle)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	// Start another frame write
+	SCB_CleanDCache_by_Addr((uint32_t *)frame, 128*160*2);
 	qspi_write_frame(frame);
 }
 
