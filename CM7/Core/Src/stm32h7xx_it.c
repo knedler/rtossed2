@@ -22,6 +22,8 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include "process.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -174,6 +176,8 @@ void PendSV_Handler(void)
 	/* USER CODE END PendSV_IRQn 0 */
 	/* USER CODE BEGIN PendSV_IRQn 1 */
 
+	printf("Something\r\n");
+
 	/* USER CODE END PendSV_IRQn 1 */
 }
 
@@ -192,8 +196,12 @@ void SysTick_Handler(void)
 
 	// Every 32 ms
 	if (uwTick == 32) {
-		HAL_GPIO_TogglePin(D0_GPIO_Port, D0_Pin);
 		uwTick = 0;
+		
+		// Toggle external LED
+		HAL_GPIO_TogglePin(D0_GPIO_Port, D0_Pin);
+
+		yield();
 	}
 
 	/* USER CODE END SysTick_IRQn 1 */
