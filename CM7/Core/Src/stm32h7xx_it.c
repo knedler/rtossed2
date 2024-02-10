@@ -185,8 +185,16 @@ void SysTick_Handler(void)
 	/* USER CODE BEGIN SysTick_IRQn 0 */
 
 	/* USER CODE END SysTick_IRQn 0 */
-	HAL_IncTick();
+
 	/* USER CODE BEGIN SysTick_IRQn 1 */
+
+	uwTick++;
+
+	// Every 32 ms
+	if (uwTick == 32) {
+		HAL_GPIO_TogglePin(D0_GPIO_Port, D0_Pin);
+		uwTick = 0;
+	}
 
 	/* USER CODE END SysTick_IRQn 1 */
 }
