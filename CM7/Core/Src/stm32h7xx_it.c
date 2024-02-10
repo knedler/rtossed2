@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SYSTICK_TIMEOUT (32)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -195,7 +195,7 @@ void SysTick_Handler(void)
 	uwTick++;
 
 	// Every 32 ms
-	if (uwTick == 32) {
+	if (uwTick == SYSTICK_TIMEOUT) {
 		uwTick = 0;
 		
 		// Toggle external LED
