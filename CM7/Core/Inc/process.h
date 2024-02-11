@@ -48,6 +48,8 @@ struct task_struct {
 
 extern struct task_struct process_table[PROC_MAX];
 
+extern struct task_struct *current;
+
 static inline void yield(void)
 {
 	// Set PENDSV bit
