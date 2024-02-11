@@ -3,8 +3,12 @@
 #define __PROCESS_H__
 
 #include <stdint.h>
+#include "stm32h7xx_hal.h"
 
 #define TASK_IDLE process_table[0]
+
+#define PROC_MAX (4) // Max processes
+
 #define STATE_UNUSED		(0)
 #define STATE_TIME_SLEEP	(1)
 #define STATE_IO_SLEEP		(2)
@@ -41,6 +45,8 @@ struct task_struct {
 	int (*cmd)(void);		// Ptr to function
 	struct saved_registers r;	// Saved registers struct
 } __attribute__((packed));
+
+extern struct task_struct process_table[PROC_MAX];
 
 static inline void yield(void)
 {
