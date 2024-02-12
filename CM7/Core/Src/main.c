@@ -75,7 +75,11 @@ const CoreDebug_Type 	*coredebug 	= CoreDebug;
 const MPU_Type 		*mpu 		= MPU;
 const FPU_Type 		*fpu		= FPU;
 
+// Init kready
 volatile uint8_t kready = FALSE;
+
+// Declare _eustack
+extern const uint32_t _eustack[];
 
 /* USER CODE END PV */
 
@@ -188,9 +192,12 @@ int main(void)
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	while (1) {
-		kready = TRUE;
 
+	__set_PSP((uint32_t)_eustack);
+
+	kready = TRUE;
+
+	while (1) {
 		HAL_Delay(50);
 		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 
