@@ -6,8 +6,6 @@
 #include "stm32h7xx_hal.h"
 #include "sys/types.h"
 
-#define TASK_IDLE process_table[0]
-
 #define PROC_MAX (4) // Max processes
 
 #define STATE_UNUSED		(0b000000)
@@ -20,10 +18,10 @@
 extern volatile uint8_t kready;
 
 struct __attribute__((packed)) saved_registers {
-	//uint32_t R0;
-	//uint32_t R1;
-	//uint32_t R2;
-	//uint32_t R3;
+	uint32_t R0;
+	uint32_t R1;
+	uint32_t R2;
+	uint32_t R3;
 	uint32_t R4;
 	uint32_t R5;
 	uint32_t R6;
@@ -32,11 +30,11 @@ struct __attribute__((packed)) saved_registers {
 	uint32_t R9;
 	uint32_t R10;
 	uint32_t R11;
-	//uint32_t R12;
+	uint32_t R12;
 	uint32_t SP;
-	//uint32_t LR;
-	//uint32_t PC;
-	//uint32_t xPSR;
+	uint32_t LR;
+	uint32_t PC;
+	uint32_t xPSR;
 };
 
 struct __attribute__((packed)) task_struct {
@@ -51,6 +49,8 @@ struct __attribute__((packed)) task_struct {
 extern struct task_struct process_table[PROC_MAX];
 
 extern struct task_struct *current;
+
+extern struct task_struct *const idle_task;
 
 static inline void yield(void)
 {
