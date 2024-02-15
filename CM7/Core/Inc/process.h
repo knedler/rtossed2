@@ -64,4 +64,6 @@ static inline void yield(void)
 	__ISB();
 }
 
+void init_process_table(void);
+
 #endif // __PROCESS_H__

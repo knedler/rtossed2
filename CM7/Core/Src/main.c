@@ -195,6 +195,8 @@ int main(void)
 
 	__set_PSP((uint32_t)_eustack);
 
+	init_process_table();
+
 	kready = TRUE;
 
 	while (1) {

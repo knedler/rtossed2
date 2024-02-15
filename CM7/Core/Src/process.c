@@ -49,7 +49,7 @@ void init_process_stack(struct task_struct *task)
 void init_process_table(void)
 {
 	// Set to zero
-	memset(process_table, 0, sizeof(process_table) * PROC_MAX);
+	memset(process_table, 0, sizeof(process_table));
 
 	// Init Idle Task
 	process_table[IDLE_TASK].state = STATE_STOP;
@@ -66,4 +66,16 @@ void init_process_table(void)
 	process_table[SHELL_TASK].state = STATE_RUN;
 	process_table[SHELL_TASK].cmd = (int(*)(void))&shell;
 	process_table[SHELL_TASK].pid = 0;
+}
+
+void process_start(void)
+{
+	// Call function
+	current->cmd();
+
+	// Change state
+	current->state = STATE_STOP;
+
+	// Loop forever
+	while(1);
 }
