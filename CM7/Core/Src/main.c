@@ -32,6 +32,7 @@
 #include "graphics.h"
 
 #include "sh.h"
+#include "process.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */

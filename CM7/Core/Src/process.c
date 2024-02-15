@@ -68,7 +68,7 @@ void init_process_table(void)
 	process_table[SHELL_TASK].r.xPSR = 0x01000000;
 	process_table[SHELL_TASK].state = STATE_RUN;
 	process_table[SHELL_TASK].cmd = (int(*)(void))&shell;
-	process-table[SHELL_TASK].exc = EXC_RETURN_THREAD_PSP;
+	process_table[SHELL_TASK].exc_return = EXC_RETURN_THREAD_PSP;
 	process_table[SHELL_TASK].pid = 0;
 }
 
