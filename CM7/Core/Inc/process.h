@@ -46,11 +46,11 @@ struct __attribute__((packed)) task_struct {
 	struct saved_registers r;	// Saved registers struct
 };
 
+// Task structs
 extern struct task_struct process_table[PROC_MAX];
-
 extern struct task_struct *current;
-
 extern struct task_struct *const idle_task;
+extern struct task_struct *const shell_task;
 
 static inline void yield(void)
 {

@@ -11,7 +11,10 @@
 struct task_struct process_table[PROC_MAX] = {0};
 
 // Define idle_task
-struct task_struct *const idle_task = &process_table[0];
+struct task_struct *const idle_task = &process_table[IDLE_TASK];
+
+// Define shell_task
+struct task_struct *const shell_task = &process_table[SHELL_TASK];
 
 // Define current var
 struct task_struct *current = idle_task;
@@ -20,8 +23,8 @@ struct task_struct *current = idle_task;
 extern const uint32_t _eustack[];
 
 void init_process_stack(struct task_struct *task);
-void init_process_table(void);
 void process_start(void);
+struct task_struct *scheduler(void);
 
 void init_process_stack(struct task_struct *task)
 {
@@ -78,4 +81,16 @@ void process_start(void)
 
 	// Loop forever
 	while(1);
+}
+
+struct task_struct *scheduler(void)
+{
+	// Switch task
+	if (current == idle_task) {
+		return shell_task;
+	} else {
+		return idle_task;
+	}
+
+	return idle_task;
 }
