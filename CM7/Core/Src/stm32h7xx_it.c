@@ -195,7 +195,7 @@ void SysTick_Handler(void)
 	uwTick++;
 
 	// Every 32 ms
-	if (uwTick == SYSTICK_TIMEOUT) {
+	if ((uwTick % SYSTICK_TIMEOUT) == 0 && kready == 1) {
 		uwTick = 0;
 		
 		// Toggle external LED
