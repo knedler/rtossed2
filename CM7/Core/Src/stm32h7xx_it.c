@@ -218,6 +218,12 @@ void __attribute__((naked)) PendSV_Handler(void)
 	// Clean up stack
 	sp += 8 * 4;
 
+	// Load regs from next
+	load_regs(next);
+
+	// Load PC from exc return
+	load_from_return(next);
+
 	/* USER CODE END PendSV_IRQn 1 */
 }
 

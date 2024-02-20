@@ -71,8 +71,14 @@ static inline void push_regs(void)
 
 static inline void load_regs(struct task_struct *task)
 {
-	asm volatile ("ldmia %0 {r4-r11}\n\t"
+	asm volatile ("ldm %0, {r4-r11}\n\t"
 			: : "r"(task->r.R4));
+}
+
+static inline void load_from_return(struct task_struct *task)
+{
+	asm volatile ("mov pc, %0\n\t"
+			: : "r"(task->exc_return));
 }
 
 void init_process_table(void);
