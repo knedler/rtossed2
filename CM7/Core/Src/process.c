@@ -24,7 +24,6 @@ extern const uint32_t _eustack[];
 
 void init_process_stack(struct task_struct *task);
 void process_start(void);
-struct task_struct *scheduler(void);
 
 void init_process_stack(struct task_struct *task)
 {
@@ -84,7 +83,7 @@ void process_start(void)
 	while(1);
 }
 
-struct task_struct *scheduler(void)
+struct task_struct *schedule(void)
 {
 	// Switch task
 	if (current == idle_task) {

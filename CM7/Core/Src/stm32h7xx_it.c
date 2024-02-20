@@ -176,7 +176,47 @@ void __attribute__((naked)) PendSV_Handler(void)
 	/* USER CODE END PendSV_IRQn 0 */
 	/* USER CODE BEGIN PendSV_IRQn 1 */
 
+	// Push regs to stack
+	push_regs();
 
+	// Variable to hold return value
+	register struct task_struct *next;
+
+	// SP variable
+	register uint32_t sp asm ("sp");
+
+	// Get next
+	next = schedule();
+
+	// Copy regs to current
+	current->r.R4 = *((uint32_t*)sp);
+	current->r.R5 = *((uint32_t*)(sp + 4));
+	current->r.R6 = *((uint32_t*)(sp + 2 * 4));
+	current->r.R7 = *((uint32_t*)(sp + 3 * 4));
+	current->r.R8 = *((uint32_t*)(sp + 4 * 4));
+	current->r.R9 = *((uint32_t*)(sp + 5 * 4));
+	current->r.R10 = *((uint32_t*)(sp + 6 * 4));
+	current->r.R11 = *((uint32_t*)(sp + 7 * 4));
+
+	// Save and restore from PSP
+	if (next == idle_task) {
+		// Save to current
+		current->sp_start = __get_PSP();
+	} else if (current == idle_task) {
+		// Restore from next
+		__set_PSP(next->sp_start);
+	} else {
+		// Save PSP
+		current->sp_start = __get_PSP();
+
+		// Restore PSP
+		__set_PSP(next->sp_start);
+	}
+
+	current = next;
+
+	// Clean up stack
+	sp += 8 * 4;
 
 	/* USER CODE END PendSV_IRQn 1 */
 }

@@ -64,6 +64,18 @@ static inline void yield(void)
 	__ISB();
 }
 
+static inline void push_regs(void)
+{
+	asm volatile ("push {r4-r11}\n\t");
+}
+
+static inline void load_regs(struct task_struct *task)
+{
+	asm volatile ("ldmia %0 {r4-r11}\n\t"
+			: : "r"(task->r.R4));
+}
+
 void init_process_table(void);
+struct task_struct *schedule(void);
 
 #endif // __PROCESS_H__
