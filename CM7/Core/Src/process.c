@@ -31,18 +31,18 @@ void init_process_stack(struct task_struct *task)
 
 	// Set floating point regs to 0
 	for (int i = 0; i < 17; i++) {
-		*(sp -= 4) = 0;
+		*(--sp) = 0;
 	}
 
 	// Add saved regs to stack
-	*(sp -= 4) = task->r.xPSR;
-	*(sp -= 4) = task->r.PC;
-	*(sp -= 4) = task->r.LR;
-	*(sp -= 4) = task->r.R12;
-	*(sp -= 4) = task->r.R3;
-	*(sp -= 4) = task->r.R2;
-	*(sp -= 4) = task->r.R1;
-	*(sp -= 4) = task->r.R0;
+	*(--sp) = task->r.xPSR;
+	*(--sp) = task->r.PC;
+	*(--sp) = task->r.LR;
+	*(--sp) = task->r.R12;
+	*(--sp) = task->r.R3;
+	*(--sp) = task->r.R2;
+	*(--sp) = task->r.R1;
+	*(--sp) = task->r.R0;
 
 	// Update sp
 	task->r.SP = (uint32_t)sp;
@@ -69,6 +69,8 @@ void init_process_table(void)
 	process_table[SHELL_TASK].cmd = (int(*)(void))&shell;
 	process_table[SHELL_TASK].exc_return = EXC_RETURN_THREAD_PSP;
 	process_table[SHELL_TASK].pid = 0;
+
+	init_process_stack(&process_table[SHELL_TASK]);
 }
 
 void process_start(void)

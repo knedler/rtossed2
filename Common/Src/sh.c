@@ -11,27 +11,29 @@ uint8_t parse_string(char *string, uint8_t len, char words[MAX_WORDS][BUF_SIZE])
 
 uint8_t shell(void)
 {
-	char input[BUF_SIZE] = {0};
-	char words[MAX_WORDS][BUF_SIZE] = {0};
-	uint8_t input_len = 0;
-	uint8_t word_count = 0;
+	while (1) {
+		char input[BUF_SIZE] = {0};
+		char words[MAX_WORDS][BUF_SIZE] = {0};
+		uint8_t input_len = 0;
+		uint8_t word_count = 0;
 	
-	// Make shell look like bash
-	printf("\r$ ");
+		// Make shell look like bash
+		printf("\r$ ");
 
-	// Get input line
-	input_len = get_line(input);
+		// Get input line
+		input_len = get_line(input);
 
-	// Get words from input
-	word_count = parse_string(input, input_len, words);
+		// Get words from input
+		word_count = parse_string(input, input_len, words);
 
-	// If echo
-	if ((4 <= input_len) && (!strcmp(words[0], "echo"))) {
-		printf("%s\n\r", input + 5);
+		// If echo
+		if ((4 <= input_len) && (!strcmp(words[0], "echo"))) {
+			printf("%s\n\r", input + 5);
+		}
+
+		printf("Words: %d\r\n", word_count);
 	}
 
-	printf("Words: %d\r\n", word_count);
-	
 	return 0;
 }
 

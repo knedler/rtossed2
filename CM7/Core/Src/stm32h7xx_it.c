@@ -183,40 +183,37 @@ void __attribute__((naked)) PendSV_Handler(void)
 	register struct task_struct *next;
 
 	// SP variable
-	register uint32_t sp asm ("sp");
+	register uint32_t *sp asm ("sp");
 
 	// Get next
 	next = schedule();
 
 	// Copy regs to current
-	current->r.R4 = *((uint32_t*)sp);
-	current->r.R5 = *((uint32_t*)(sp + 4));
-	current->r.R6 = *((uint32_t*)(sp + 2 * 4));
-	current->r.R7 = *((uint32_t*)(sp + 3 * 4));
-	current->r.R8 = *((uint32_t*)(sp + 4 * 4));
-	current->r.R9 = *((uint32_t*)(sp + 5 * 4));
-	current->r.R10 = *((uint32_t*)(sp + 6 * 4));
-	current->r.R11 = *((uint32_t*)(sp + 7 * 4));
+	current->r.R4 = *(sp++);
+	current->r.R5 = *(sp++);
+	current->r.R6 = *(sp++);
+	current->r.R7 = *(sp++);
+	current->r.R8 = *(sp++);
+	current->r.R9 = *(sp++);
+	current->r.R10 = *(sp++);
+	current->r.R11 = *(sp++);
 
 	// Save and restore from PSP
 	if (next == idle_task) {
 		// Save to current
-		current->sp_start = __get_PSP();
+		current->r.SP = __get_PSP();
 	} else if (current == idle_task) {
 		// Restore from next
-		__set_PSP(next->sp_start);
+		__set_PSP(next->r.SP);
 	} else {
 		// Save PSP
-		current->sp_start = __get_PSP();
+		current->r.SP = __get_PSP();
 
 		// Restore PSP
-		__set_PSP(next->sp_start);
+		__set_PSP(next->r.SP);
 	}
 
 	current = next;
-
-	// Clean up stack
-	sp += 8 * 4;
 
 	// Load regs from next
 	load_regs(next);
@@ -242,8 +239,6 @@ void SysTick_Handler(void)
 
 	// Every 32 ms
 	if ((uwTick % SYSTICK_TIMEOUT) == 0 && kready == 1) {
-		uwTick = 0;
-		
 		// Toggle external LED
 		HAL_GPIO_TogglePin(D0_GPIO_Port, D0_Pin);
 

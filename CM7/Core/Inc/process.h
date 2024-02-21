@@ -38,7 +38,7 @@ struct __attribute__((packed)) saved_registers {
 };
 
 struct __attribute__((packed)) task_struct {
-	uint8_t state;			// Process state
+	uint32_t state;			// Process state
 	pid_t pid;			// Unique id
 	uint32_t exc_return;		// Special prog counter
 	uint32_t sp_start;		// Starting stack pointer addr
@@ -66,19 +66,17 @@ static inline void yield(void)
 
 static inline void push_regs(void)
 {
-	asm volatile ("push {r4-r11}\n\t");
+	asm volatile ("push {r4-r11}\n\t" : :);
 }
 
 static inline void load_regs(struct task_struct *task)
 {
-	asm volatile ("ldm %0, {r4-r11}\n\t"
-			: : "r"(task->r.R4));
+	asm volatile ("ldmia %0, {r4-r11}\n\t" : : "r" (&(task->r.R4)));
 }
 
 static inline void load_from_return(struct task_struct *task)
 {
-	asm volatile ("mov pc, %0\n\t"
-			: : "r"(task->exc_return));
+	asm volatile ("ldr pc, %0\n\t" : : "m" (task->exc_return));
 }
 
 void init_process_table(void);
