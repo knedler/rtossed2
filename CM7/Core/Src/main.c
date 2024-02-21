@@ -65,16 +65,16 @@
 
 /* USER CODE BEGIN PV */
 // Make these memory locations be visible in the debugger
-const SCnSCB_Type 	*scnscb 	= SCnSCB;
-const SCB_Type 		*scb 		= SCB;
-const SysTick_Type 	*systick 	= SysTick;
-const NVIC_Type 	*nvic		= NVIC;
-const ITM_Type 		*itm 		= ITM;
-const DWT_Type		*dwt 		= DWT;
-const TPI_Type 		*tpi 		= TPI;
-const CoreDebug_Type 	*coredebug 	= CoreDebug;
-const MPU_Type 		*mpu 		= MPU;
-const FPU_Type 		*fpu		= FPU;
+const SCnSCB_Type *scnscb = SCnSCB;
+const SCB_Type *scb = SCB;
+const SysTick_Type *systick = SysTick;
+const NVIC_Type *nvic = NVIC;
+const ITM_Type *itm = ITM;
+const DWT_Type *dwt = DWT;
+const TPI_Type *tpi = TPI;
+const CoreDebug_Type *coredebug = CoreDebug;
+const MPU_Type *mpu = MPU;
+const FPU_Type *fpu = FPU;
 
 // Init kready
 volatile uint8_t kready = FALSE;
@@ -103,10 +103,10 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 
-	/* Enable I-Cache-----------------------------------------------------*/
+	/* Enable I-Cache----------------------------------------------------- */
 	SCB_EnableICache();
 
-	/* Enable D-Cache-----------------------------------------------------*/
+	/* Enable D-Cache----------------------------------------------------- */
 	SCB_EnableDCache();
 
 	/* USER CODE END 1 */
@@ -142,11 +142,11 @@ int main(void)
 	 * Cortex-M4 by means of HSEM notification
 	 */
 
-	/*HW semaphore Clock enable*/
+	/*HW semaphore Clock enable */
 	__HAL_RCC_HSEM_CLK_ENABLE();
 	/*Take HSEM */
 	HAL_HSEM_FastTake(HSEM_ID_0);
-	/*Release HSEM in order to notify the CPU2(CM4)*/
+	/*Release HSEM in order to notify the CPU2(CM4) */
 	HAL_HSEM_Release(HSEM_ID_0, 0);
 	/* wait until CPU2 wakes up from stop mode */
 	timeout = 0xFFFF;
@@ -174,17 +174,17 @@ int main(void)
 
 	// Colors are RRRRRGGG|GGGBBBBB in 16 bits RGB565
 	// Stored in memory as little endian - I think this will work with Chrom-ART
-	graphics_init(160,128);
+	graphics_init(160, 128);
 	graphics_setTextWrap(false);
 	graphics_setTextColor(graphics_mk_color(0xFFFF));
 	graphics_setTextSize(2);
-	memset(frame,0x00,160*128*2);
+	memset(frame, 0x00, 160 * 128 * 2);
 	Adafruit_ST7735_init();
 	qspi_write_frame(frame);
 	HAL_TIM_Base_Start_IT(&htim15);
 	HAL_Delay(1000);
-	frame_buffer_fillRect(10,10,25,25,0xFFFF);
-	graphics_drawText("Hello World",10,75);
+	frame_buffer_fillRect(10, 10, 25, 25, 0xFFFF);
+	graphics_drawText("Hello World", 10, 75);
 
 	setvbuf(stdout, NULL, _IONBF, 0);
 	HAL_Delay(2500);
@@ -194,7 +194,7 @@ int main(void)
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 
-	__set_PSP((uint32_t)_eustack);
+	__set_PSP((uint32_t) _eustack);
 
 	init_process_table();
 
@@ -251,7 +251,7 @@ void SystemClock_Config(void)
 		Error_Handler();
 	}
 
-	/** Initializes the CPU, AHB and APB buses clocks */
+				/** Initializes the CPU, AHB and APB buses clocks */
 	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
 	    | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2
 	    | RCC_CLOCKTYPE_D3PCLK1 | RCC_CLOCKTYPE_D1PCLK1;

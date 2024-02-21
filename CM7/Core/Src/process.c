@@ -8,7 +8,7 @@
 #define SHELL_TASK (1)
 
 // Define process table
-struct task_struct process_table[PROC_MAX] = {0};
+struct task_struct process_table[PROC_MAX] = { 0 };
 
 // Define idle_task
 struct task_struct *const idle_task = &process_table[IDLE_TASK];
@@ -27,7 +27,7 @@ void process_start(void);
 
 void init_process_stack(struct task_struct *task)
 {
-	uint32_t *sp = (uint32_t *)task->r.SP;
+	uint32_t *sp = (uint32_t *) task->r.SP;
 
 	// Set floating point regs to 0
 	for (int i = 0; i < 17; i++) {
@@ -45,7 +45,7 @@ void init_process_stack(struct task_struct *task)
 	*(--sp) = task->r.R0;
 
 	// Update sp
-	task->r.SP = (uint32_t)sp;
+	task->r.SP = (uint32_t) sp;
 }
 
 void init_process_table(void)
@@ -60,13 +60,13 @@ void init_process_table(void)
 	process_table[IDLE_TASK].pid = 0;
 
 	// Init Shell Task
-	process_table[SHELL_TASK].r.SP = (uint32_t)_eustack;
-	process_table[SHELL_TASK].sp_start = (uint32_t)_eustack;
+	process_table[SHELL_TASK].r.SP = (uint32_t) _eustack;
+	process_table[SHELL_TASK].sp_start = (uint32_t) _eustack;
 	process_table[SHELL_TASK].r.LR = 0;
-	process_table[SHELL_TASK].r.PC = (uint32_t)&process_start;
+	process_table[SHELL_TASK].r.PC = (uint32_t) & process_start;
 	process_table[SHELL_TASK].r.xPSR = 0x01000000;
 	process_table[SHELL_TASK].state = STATE_RUN;
-	process_table[SHELL_TASK].cmd = (int(*)(void))&shell;
+	process_table[SHELL_TASK].cmd = (int (*)(void))&shell;
 	process_table[SHELL_TASK].exc_return = EXC_RETURN_THREAD_PSP;
 	process_table[SHELL_TASK].pid = 0;
 
@@ -82,7 +82,7 @@ void process_start(void)
 	current->state = STATE_STOP;
 
 	// Loop forever
-	while(1);
+	while (1) ;
 }
 
 struct task_struct *schedule(void)

@@ -183,7 +183,7 @@ void __attribute__((naked)) PendSV_Handler(void)
 	register struct task_struct *next;
 
 	// SP variable
-	register uint32_t *sp asm ("sp");
+	register uint32_t *sp asm("sp");
 
 	// Get next
 	next = schedule();

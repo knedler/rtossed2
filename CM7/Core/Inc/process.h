@@ -6,7 +6,7 @@
 #include "stm32h7xx_hal.h"
 #include "sys/types.h"
 
-#define PROC_MAX (4) // Max processes
+#define PROC_MAX (4)		// Max processes
 
 #define STATE_UNUSED		(0b000000)
 #define STATE_TIME_SLEEP	(0b000010)
@@ -38,11 +38,11 @@ struct __attribute__((packed)) saved_registers {
 };
 
 struct __attribute__((packed)) task_struct {
-	uint32_t state;			// Process state
-	pid_t pid;			// Unique id
-	uint32_t exc_return;		// Special prog counter
-	uint32_t sp_start;		// Starting stack pointer addr
-	int (*cmd)(void);		// Ptr to function
+	uint32_t state;		// Process state
+	pid_t pid;		// Unique id
+	uint32_t exc_return;	// Special prog counter
+	uint32_t sp_start;	// Starting stack pointer addr
+	int (*cmd)(void);	// Ptr to function
 	struct saved_registers r;	// Saved registers struct
 };
 
@@ -66,20 +66,20 @@ static inline void yield(void)
 
 static inline void push_regs(void)
 {
-	asm volatile ("push {r4-r11}\n\t" : :);
+	asm volatile ("push {r4-r11}\n\t"::);
 }
 
 static inline void load_regs(struct task_struct *task)
 {
-	asm volatile ("ldmia %0, {r4-r11}\n\t" : : "r" (&(task->r.R4)));
+	asm volatile ("ldmia %0, {r4-r11}\n\t"::"r" (&(task->r.R4)));
 }
 
 static inline void load_from_return(struct task_struct *task)
 {
-	asm volatile ("ldr pc, %0\n\t" : : "m" (task->exc_return));
+	asm volatile ("ldr pc, %0\n\t"::"m" (task->exc_return));
 }
 
 void init_process_table(void);
 struct task_struct *schedule(void);
 
-#endif // __PROCESS_H__
+#endif				// __PROCESS_H__
