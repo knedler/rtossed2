@@ -108,14 +108,6 @@ void process_start(void)
 
 struct task_struct *schedule(void)
 {
-	if (current == idle_task) {
-		return shell_task;
-	} else if (current == shell_task) {
-		return pdblink_task;
-	} else if (current == pdblink_task) {
-		return idle_task;
-	}
-	/*
 	// Iterate through to find next runnable task
 	for (uint8_t i = 0; i < PROC_MAX; i++) {
 		next_index = (next_index + 1) % PROC_MAX;
@@ -125,7 +117,7 @@ struct task_struct *schedule(void)
 
 		// Check if sleeping and is time to wake
 		if ((next->state & STATE_TIME_SLEEP) && (uwTick > next->w_time)) {
-			next->state &= STATE_TIME_SLEEP;
+			next->state &= ~STATE_TIME_SLEEP;
 			next->state |= STATE_RUN;
 		}
 
@@ -134,7 +126,7 @@ struct task_struct *schedule(void)
 			return next;
 		}
 	}
-	*/
+
 	// Return idle if no runnable task
 	return idle_task;
 }
