@@ -9,6 +9,6 @@ int pdblink(void)
 	while (1) {
 		HAL_GPIO_TogglePin(D3_GPIO_Port, D3_Pin);
 
-		microsleep(50000);
+		HAL_Delay(50);
 	}
 }

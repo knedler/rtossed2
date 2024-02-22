@@ -47,6 +47,9 @@ uint8_t get_line(char *buf)
 		c = getchar();
 
 		switch ((char) c) {
+		case 27 :
+			// Escape key
+			break;
 		case '\n' : 
 		case '\r' :
 			// End of line
