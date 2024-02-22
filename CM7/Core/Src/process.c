@@ -3,9 +3,11 @@
 #include <string.h>
 #include "process.h"
 #include "sh.h"
+#include "pdblink.h"
 
 #define IDLE_TASK (0)
 #define SHELL_TASK (1)
+#define PDBLINK_TASK (2)
 
 // Define process table
 struct task_struct process_table[PROC_MAX] = { 0 };
@@ -15,6 +17,9 @@ struct task_struct *const idle_task = &process_table[IDLE_TASK];
 
 // Define shell_task
 struct task_struct *const shell_task = &process_table[SHELL_TASK];
+
+// Define pdblink_task
+struct task_struct *const pdblink_task = &process_table[PDBLINK_TASK];
 
 // Define current var
 struct task_struct *current = idle_task;
@@ -54,7 +59,7 @@ void init_process_table(void)
 	memset(process_table, 0, sizeof(process_table));
 
 	// Init Idle Task
-	process_table[IDLE_TASK].state = STATE_STOP;
+	process_table[IDLE_TASK].state = STATE_RUN;
 	process_table[IDLE_TASK].r.xPSR = 0x01000000;
 	process_table[IDLE_TASK].exc_return = EXC_RETURN_THREAD_MSP_FPU;
 	process_table[IDLE_TASK].pid = 0;
@@ -68,9 +73,22 @@ void init_process_table(void)
 	process_table[SHELL_TASK].state = STATE_RUN;
 	process_table[SHELL_TASK].cmd = (int (*)(void))&shell;
 	process_table[SHELL_TASK].exc_return = EXC_RETURN_THREAD_PSP;
-	process_table[SHELL_TASK].pid = 0;
+	process_table[SHELL_TASK].pid = 1;
 
 	init_process_stack(&process_table[SHELL_TASK]);
+	
+	// Init Pdblink Task
+	process_table[PDBLINK_TASK].r.SP = (uint32_t) (_eustack - 0x800);
+	process_table[PDBLINK_TASK].sp_start = (uint32_t) (_eustack - 0x800);
+	process_table[PDBLINK_TASK].r.LR = 0;
+	process_table[PDBLINK_TASK].r.PC = (uint32_t) & process_start;
+	process_table[PDBLINK_TASK].r.xPSR = 0x01000000;
+	process_table[PDBLINK_TASK].state = STATE_RUN;
+	process_table[PDBLINK_TASK].cmd = &pdblink;
+	process_table[PDBLINK_TASK].exc_return = EXC_RETURN_THREAD_PSP;
+	process_table[PDBLINK_TASK].pid = 2;
+
+	init_process_stack(&process_table[PDBLINK_TASK]);
 }
 
 void process_start(void)
@@ -90,7 +108,9 @@ struct task_struct *schedule(void)
 	// Switch task
 	if (current == idle_task) {
 		return shell_task;
-	} else {
+	} else if (current == shell_task) {
+		return pdblink_task;
+	} else if (current == pdblink_task) {
 		return idle_task;
 	}
 
