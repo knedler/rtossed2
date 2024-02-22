@@ -22,6 +22,8 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include "process.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SYSTICK_TIMEOUT (32)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -167,12 +169,57 @@ void DebugMon_Handler(void)
 /**
   * @brief This function handles Pendable request for system service.
   */
-void PendSV_Handler(void)
+void __attribute__((naked)) PendSV_Handler(void)
 {
 	/* USER CODE BEGIN PendSV_IRQn 0 */
 
 	/* USER CODE END PendSV_IRQn 0 */
 	/* USER CODE BEGIN PendSV_IRQn 1 */
+
+	// Push regs to stack
+	push_regs();
+
+	// Variable to hold return value
+	register struct task_struct *next;
+
+	// SP variable
+	register uint32_t *sp asm("sp");
+
+	// Get next
+	next = schedule();
+
+	// Copy regs to current
+	current->r.R4 = *(sp++);
+	current->r.R5 = *(sp++);
+	current->r.R6 = *(sp++);
+	current->r.R7 = *(sp++);
+	current->r.R8 = *(sp++);
+	current->r.R9 = *(sp++);
+	current->r.R10 = *(sp++);
+	current->r.R11 = *(sp++);
+
+	// Save and restore from PSP
+	if (next == idle_task) {
+		// Save to current
+		current->r.SP = __get_PSP();
+	} else if (current == idle_task) {
+		// Restore from next
+		__set_PSP(next->r.SP);
+	} else {
+		// Save PSP
+		current->r.SP = __get_PSP();
+
+		// Restore PSP
+		__set_PSP(next->r.SP);
+	}
+
+	current = next;
+
+	// Load regs from next
+	load_regs(next);
+
+	// Load PC from exc return
+	load_from_return(next);
 
 	/* USER CODE END PendSV_IRQn 1 */
 }
@@ -185,8 +232,18 @@ void SysTick_Handler(void)
 	/* USER CODE BEGIN SysTick_IRQn 0 */
 
 	/* USER CODE END SysTick_IRQn 0 */
-	HAL_IncTick();
+
 	/* USER CODE BEGIN SysTick_IRQn 1 */
+
+	uwTick++;
+
+	// Every 32 ms
+	if ((uwTick % SYSTICK_TIMEOUT) == 0 && kready == 1) {
+		// Toggle external LED
+		HAL_GPIO_TogglePin(D0_GPIO_Port, D0_Pin);
+
+		yield();
+	}
 
 	/* USER CODE END SysTick_IRQn 1 */
 }

@@ -32,6 +32,7 @@
 #include "graphics.h"
 
 #include "sh.h"
+#include "process.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -50,6 +51,9 @@
 #define HSEM_ID_0 (0U)		/* HW semaphore 0 */
 #endif
 
+#define TRUE (1)
+#define FALSE (0)
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,16 +65,23 @@
 
 /* USER CODE BEGIN PV */
 // Make these memory locations be visible in the debugger
-const SCnSCB_Type 	*scnscb 	= SCnSCB;
-const SCB_Type 		*scb 		= SCB;
-const SysTick_Type 	*systick 	= SysTick;
-const NVIC_Type 	*nvic		= NVIC;
-const ITM_Type 		*itm 		= ITM;
-const DWT_Type		*dwt 		= DWT;
-const TPI_Type 		*tpi 		= TPI;
-const CoreDebug_Type 	*coredebug 	= CoreDebug;
-const MPU_Type 		*mpu 		= MPU;
-const FPU_Type 		*fpu		= FPU;
+const SCnSCB_Type *scnscb = SCnSCB;
+const SCB_Type *scb = SCB;
+const SysTick_Type *systick = SysTick;
+const NVIC_Type *nvic = NVIC;
+const ITM_Type *itm = ITM;
+const DWT_Type *dwt = DWT;
+const TPI_Type *tpi = TPI;
+const CoreDebug_Type *coredebug = CoreDebug;
+const MPU_Type *mpu = MPU;
+const FPU_Type *fpu = FPU;
+
+// Init kready
+volatile uint8_t kready = FALSE;
+
+// Declare _eustack
+extern const uint32_t _eustack[];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,12 +103,18 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
-/* USER CODE BEGIN Boot_Mode_Sequence_0 */
-	int32_t timeout;
-/* USER CODE END Boot_Mode_Sequence_0 */
+	/* Enable I-Cache----------------------------------------------------- */
+	SCB_EnableICache();
 
-/* USER CODE BEGIN Boot_Mode_Sequence_1 */
+	/* Enable D-Cache----------------------------------------------------- */
+	SCB_EnableDCache();
+
+	/* USER CODE END 1 */
+	/* USER CODE BEGIN Boot_Mode_Sequence_0 */
+	int32_t timeout;
+	/* USER CODE END Boot_Mode_Sequence_0 */
+
+	/* USER CODE BEGIN Boot_Mode_Sequence_1 */
 	/* Wait until CPU2 boots and enters in stop mode or timeout */
 	timeout = 0xFFFF;
 	while ((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET)
@@ -105,10 +122,13 @@ int main(void)
 	if (timeout < 0) {
 		Error_Handler();
 	}
-/* USER CODE END Boot_Mode_Sequence_1 */
-	/* MCU Configuration-------------------------------------------------------- */
+	/* USER CODE END Boot_Mode_Sequence_1 */
+	/* MCU Configuration------------------------------------------------- */
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	/* Reset of all peripherals, Initializes the Flash interface and the
+	 * Systick.
+	 */
+
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
@@ -117,23 +137,25 @@ int main(void)
 
 	/* Configure the system clock */
 	SystemClock_Config();
-/* USER CODE BEGIN Boot_Mode_Sequence_2 */
-/* When system initialization is finished, Cortex-M7 will release Cortex-M4 by means of
-HSEM notification */
-/*HW semaphore Clock enable*/
+	/* USER CODE BEGIN Boot_Mode_Sequence_2 */
+	/* When system initialization is finished, Cortex-M7 will release
+	 * Cortex-M4 by means of HSEM notification
+	 */
+
+	/*HW semaphore Clock enable */
 	__HAL_RCC_HSEM_CLK_ENABLE();
-/*Take HSEM */
+	/*Take HSEM */
 	HAL_HSEM_FastTake(HSEM_ID_0);
-/*Release HSEM in order to notify the CPU2(CM4)*/
+	/*Release HSEM in order to notify the CPU2(CM4) */
 	HAL_HSEM_Release(HSEM_ID_0, 0);
-/* wait until CPU2 wakes up from stop mode */
+	/* wait until CPU2 wakes up from stop mode */
 	timeout = 0xFFFF;
 	while ((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET)
 	       && (timeout-- > 0)) ;
 	if (timeout < 0) {
 		Error_Handler();
 	}
-/* USER CODE END Boot_Mode_Sequence_2 */
+	/* USER CODE END Boot_Mode_Sequence_2 */
 
 	/* USER CODE BEGIN SysInit */
 
@@ -152,17 +174,17 @@ HSEM notification */
 
 	// Colors are RRRRRGGG|GGGBBBBB in 16 bits RGB565
 	// Stored in memory as little endian - I think this will work with Chrom-ART
-	graphics_init(160,128);
+	graphics_init(160, 128);
 	graphics_setTextWrap(false);
 	graphics_setTextColor(graphics_mk_color(0xFFFF));
 	graphics_setTextSize(2);
-	memset(frame,0x00,160*128*2);
+	memset(frame, 0x00, 160 * 128 * 2);
 	Adafruit_ST7735_init();
 	qspi_write_frame(frame);
 	HAL_TIM_Base_Start_IT(&htim15);
 	HAL_Delay(1000);
-	frame_buffer_fillRect(10,10,25,25,0xFFFF);
-	graphics_drawText("Hello World",10,75);
+	frame_buffer_fillRect(10, 10, 25, 25, 0xFFFF);
+	graphics_drawText("Hello World", 10, 75);
 
 	setvbuf(stdout, NULL, _IONBF, 0);
 	HAL_Delay(2500);
@@ -171,8 +193,17 @@ HSEM notification */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+
+	__set_PSP((uint32_t) _eustack);
+
+	init_process_table();
+
+	kready = TRUE;
+
 	while (1) {
-		shell();
+		HAL_Delay(50);
+		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -190,20 +221,20 @@ void SystemClock_Config(void)
 	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
 	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  /** Supply configuration update enable
-  */
+	/** Supply configuration update enable */
+
 	HAL_PWREx_ConfigSupply(PWR_DIRECT_SMPS_SUPPLY);
 
-  /** Configure the main internal regulator output voltage
-  */
+	/** Configure the main internal regulator output voltage */
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 	while (!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {
 	}
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+	/** Initializes the RCC Oscillators according to the specified
+	 * parameters in the RCC_OscInitTypeDef structure.
+	 */
+
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -220,8 +251,7 @@ void SystemClock_Config(void)
 		Error_Handler();
 	}
 
-		       /** Initializes the CPU, AHB and APB buses clocks
-  */
+				/** Initializes the CPU, AHB and APB buses clocks */
 	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
 	    | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2
 	    | RCC_CLOCKTYPE_D3PCLK1 | RCC_CLOCKTYPE_D1PCLK1;
