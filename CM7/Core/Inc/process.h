@@ -44,6 +44,7 @@ struct __attribute__((packed)) task_struct {
 	uint32_t sp_start;	// Starting stack pointer addr
 	int (*cmd)(void);	// Ptr to function
 	struct saved_registers r;	// Saved registers struct
+	uint32_t w_time; 	// Time to wake
 };
 
 // Task structs
