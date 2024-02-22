@@ -89,6 +89,7 @@ C_SOURCES =  \
 ../../Common/Src/pdblink.c \
 ../../CM7/Core/Src/progs.c \
 ../../CM7/Core/Src/process.c \
+../../CM7/Core/Src/user_syscalls.c \
 ../../CM7/Core/Src/Adafruit_ST7735.c \
 ../../CM7/Core/Src/syscalls.c
 
