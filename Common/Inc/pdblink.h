@@ -1,7 +1,7 @@
 // pdblink.h
-#ifndef __PDBLINK_H__
-#define __PDBLINK_H__
+#ifndef PDBLINK_H
+#define PDBLINK_H
 
 int pdblink(void);
 
-#endif // __PDBLINK_H__
+#endif // PDBLINK_H

@@ -79,7 +79,7 @@ void init_process_table(void)
 	process_table[SHELL_TASK].pid = 1;
 
 	init_process_stack(&process_table[SHELL_TASK]);
-	
+
 	// Init Pdblink Task
 	process_table[PDBLINK_TASK].r.SP = (uint32_t) (_eustack - 0x800);
 	process_table[PDBLINK_TASK].sp_start = (uint32_t) (_eustack - 0x800);
@@ -120,7 +120,6 @@ struct task_struct *schedule(void)
 			next->state &= ~STATE_TIME_SLEEP;
 			next->state |= STATE_RUN;
 		}
-
 		// Check if runnable
 		if (next->state & STATE_RUN) {
 			return next;

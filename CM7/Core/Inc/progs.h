@@ -1,7 +1,7 @@
 // progs.h
-#ifndef __PROGS_H__
-#define __PROGS_H__
+#ifndef PROGS_H
+#define PROGS_H
 
 #include <stdint.h>
 
-#endif // __PROGS_H__
+#endif // PROGS_H

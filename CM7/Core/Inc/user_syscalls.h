@@ -1,9 +1,9 @@
 // user_syscalls.h
-#ifndef __USER_SYSCALLS_H__
-#define __USER_SYSCALLS_H__
+#ifndef USER_SYSCALLS_H
+#define USER_SYSCALLS_H
 
 #include <stdint.h>
 
 int microsleep(uint32_t msec);
 
-#endif // __USER_SYSCALLS_H__
+#endif // USER_SYSCALLS_H
