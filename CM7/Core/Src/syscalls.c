@@ -31,6 +31,7 @@
 #include <sys/wait.h>
 #include <stdint.h>
 #include "usart.h"
+#include "process.h"
 
 #define FreeRTOS
 #define MAX_STACK_SIZE 0x2000
@@ -42,8 +43,7 @@ extern int __io_getchar(void) __attribute__((weak));
 register char *stack_ptr asm("sp");
 #endif
 
-
-
+struct task_struct *io_wait_task = NULL;
 
 caddr_t _sbrk(int incr)
 {
@@ -142,12 +142,36 @@ int _lseek(int file, int ptr, int dir)
 	return 0;
 }
 
-int _read(int fd, char *buf, int cnt)
+int _read(int fd, char *buf, int len)
 {
-	HAL_UART_Receive(&huart3, (uint8_t*)buf, 1, HAL_MAX_DELAY);
+	// Make sure len > 0
+	if (len == 0)
+		return 0;
+
+	// Receive via interrupt
+	HAL_UART_Receive_IT(&huart3, (uint8_t*)buf, 1);
+
+	// Change state
+	current->state &= ~STATE_RUN;
+	current->state |= STATE_IO_SLEEP;
+
+	// Set task
+	io_wait_task = current;
+
+	yield();
 
 	return 1;
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart)
+{
+	// Change state
+	io_wait_task->state &= ~STATE_IO_SLEEP;
+	io_wait_task->state |= STATE_RUN;
+
+	yield();
+}
+
 
 int _open(char *path, int flags, ...)
 {
