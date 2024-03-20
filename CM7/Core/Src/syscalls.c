@@ -15,7 +15,6 @@
  * note the changes to _write()
  */
 
-
 #include <_ansi.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,7 +57,7 @@ caddr_t _sbrk(int incr)
 
 #ifdef FreeRTOS
 	/* Use the NVIC offset register to locate the main stack pointer. */
-	min_stack_ptr = (char *) (*(unsigned int *) *(unsigned int *) 0xE000ED08);
+	min_stack_ptr = (char *)(*(unsigned int *)*(unsigned int *)0xE000ED08);
 	/* Locate the STACK bottom address */
 	min_stack_ptr -= MAX_STACK_SIZE;
 
@@ -149,7 +148,7 @@ int _read(int fd, char *buf, int len)
 		return 0;
 
 	// Receive via interrupt
-	HAL_UART_Receive_IT(&huart3, (uint8_t*)buf, 1);
+	HAL_UART_Receive_IT(&huart3, (uint8_t *) buf, 1);
 
 	// Change state
 	current->state &= ~STATE_RUN;
@@ -171,7 +170,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart)
 
 	yield();
 }
-
 
 int _open(char *path, int flags, ...)
 {
