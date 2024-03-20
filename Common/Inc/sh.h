@@ -1,9 +1,9 @@
 // sh.h
-#ifndef __SHELL_H__
-#define __SHELL_H__
+#ifndef SHELL_H
+#define SHELL_H
 
 #include <stdint.h>
 
 uint8_t shell(void);
 
-#endif // __SHELL_H__
+#endif // SHELL_H

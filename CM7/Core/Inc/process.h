@@ -1,6 +1,6 @@
 // process.h
-#ifndef __PROCESS_H__
-#define __PROCESS_H__
+#ifndef PROCESS_H
+#define PROCESS_H
 
 #include <stdint.h>
 #include "stm32h7xx_hal.h"
@@ -44,7 +44,7 @@ struct __attribute__((packed)) task_struct {
 	uint32_t sp_start;	// Starting stack pointer addr
 	int (*cmd)(void);	// Ptr to function
 	struct saved_registers r;	// Saved registers struct
-	uint32_t w_time; 	// Time to wake
+	uint32_t w_time;	// Time to wake
 };
 
 // Task structs
@@ -83,4 +83,4 @@ static inline void load_from_return(struct task_struct *task)
 void init_process_table(void);
 struct task_struct *schedule(void);
 
-#endif				// __PROCESS_H__
+#endif				// PROCESS_H

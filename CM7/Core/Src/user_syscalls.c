@@ -4,7 +4,7 @@
 #include "process.h"
 
 int microsleep(uint32_t usec)
-{	
+{
 	// Get wakeup time after converting to micro sec 
 	current->w_time = uwTick + (usec / 1000);
 
