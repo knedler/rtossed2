@@ -41,6 +41,7 @@ C_SOURCES =  \
 ../../CM4/Core/Src/mdma.c \
 ../../Common/Src/frame_buffer.c \
 ../../CM4/Core/Src/usart.c \
+../../CM4/Core/Src/syscalls.c \
 ../../CM4/Core/Src/stm32h7xx_it.c \
 ../../CM4/Core/Src/stm32h7xx_hal_msp.c \
 ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c \
@@ -71,6 +72,7 @@ C_SOURCES =  \
 ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c \
 ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c \
 ../../Common/Src/system_stm32h7xx_dualcore_boot_cm4_cm7.c \
+../../Common/Src/locking.c \
 ../../Common/Src/graphics.c \
 ../../Common/Src/glcdfont.c 
 
@@ -167,7 +169,7 @@ LDSCRIPT = stm32h755xx_flash_CM4.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin

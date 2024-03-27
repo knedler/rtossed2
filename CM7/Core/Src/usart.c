@@ -24,7 +24,7 @@
 
 /* USER CODE END 0 */
 
-UART_HandleTypeDef huart3;
+UART_HandleTypeDef huart3 __attribute__ (( section(".axi") ));
 
 /* USART3 init function */
 

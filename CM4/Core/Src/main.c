@@ -17,8 +17,10 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
 #include "main.h"
 #include "mdma.h"
+#include "locking.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -47,7 +49,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern volatile uint64_t counter __attribute__ (( section(".axi") ));
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,14 +111,15 @@ int main(void)
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		// Toggle Led 2
-		HAL_Delay(50);
+		//HAL_Delay(50);
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-		/* USER CODE END WHILE */
+		for (uint16_t i = 0; i < 10000; i++) {
+			counter++;
+		}
 
-		/* USER CODE BEGIN 3 */
+		printf("CM4: %lld", counter);
 	}
-	/* USER CODE END 3 */
 }
 
 /* USER CODE BEGIN 4 */

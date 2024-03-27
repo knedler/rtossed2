@@ -33,6 +33,7 @@
 
 #include "sh.h"
 #include "process.h"
+#include "locking.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -82,6 +83,9 @@ volatile uint8_t kready = FALSE;
 // Declare _eustack
 extern const uint32_t _eustack[];
 
+// Declare global var
+extern volatile uint64_t counter __attribute__ (( section(".axi") ));
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,10 +108,10 @@ int main(void)
 	/* USER CODE BEGIN 1 */
 
 	/* Enable I-Cache----------------------------------------------------- */
-	SCB_EnableICache();
+	//SCB_EnableICache();
 
 	/* Enable D-Cache----------------------------------------------------- */
-	SCB_EnableDCache();
+	//SCB_EnableDCache();
 
 	/* USER CODE END 1 */
 	/* USER CODE BEGIN Boot_Mode_Sequence_0 */
@@ -198,18 +202,18 @@ int main(void)
 
 	init_process_table();
 
-	kready = TRUE;
+	//kready = TRUE;
 
 	while (1) {
-		HAL_Delay(50);
+		//HAL_Delay(50);
 		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 
-		/* USER CODE END WHILE */
+		for (uint32_t i = 0; i < 100000000; i++) {
+			counter++;
+		}
 
-		/* USER CODE BEGIN 3 */
-
+		printf("CM7: %lld", counter);
 	}
-	/* USER CODE END 3 */
 }
 
 /**
