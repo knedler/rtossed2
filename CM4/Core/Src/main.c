@@ -118,7 +118,7 @@ int main(void)
 			counter++;
 		}
 
-		printf("CM4: %lld", counter);
+		printf("CM4: %lld\r\n", counter);
 	}
 }
 

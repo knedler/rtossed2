@@ -212,7 +212,7 @@ int main(void)
 			counter++;
 		}
 
-		printf("CM7: %lld", counter);
+		printf("CM7: %lld\r\n", counter);
 	}
 }
 
