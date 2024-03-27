@@ -7,4 +7,4 @@
 int sys_millisleep(uint32_t req);
 int sys_kill(pid_t pid, int sig);
 
-#endif // KERNEL_SYSCALLS_H
+#endif				// KERNEL_SYSCALLS_H

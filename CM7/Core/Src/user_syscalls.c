@@ -37,13 +37,10 @@ int _millisleep(int req)
 	int ret;
 
 	// Load registers and transition to kernel space
-	__asm__ __volatile__ (
-		"movs %0, %2\n\t"
-		"ldr %1, %3\n\t"
-		"svc 42\n\t"
-		: "=r" (r0), "=r" (r1)
-		: "i" (__NR_millisleep), "m" (req)
-		:);
+	__asm__ __volatile__("movs %0, %2\n\t"
+			     "ldr %1, %3\n\t" "svc 42\n\t":"=r"(r0), "=r"(r1)
+			     :"i"(__NR_millisleep), "m"(req)
+			     :);
 
 	__DSB();
 	__ISB();
@@ -51,8 +48,8 @@ int _millisleep(int req)
 	while (((SCB->ICSR) & SCB_ICSR_PENDSVSET_Msk) ==
 	       SCB_ICSR_PENDSVSET_Msk) ;
 
-	ret = r0; // Return value
-	errno = r1; // errno from kernel
+	ret = r0;		// Return value
+	errno = r1;		// errno from kernel
 	return ret;
 }
 

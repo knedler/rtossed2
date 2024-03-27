@@ -152,20 +152,20 @@ void SVC_Handler(void)
 {
 	uint32_t *psp = (uint32_t *) __get_PSP();	// Points to R0 on exception frame
 	uint32_t register r0 asm("r0");	// syscall number
-	pid_t pid;			// PID
-	int sig;			// Signal to be sent
-	uint32_t req;			// Request
+	pid_t pid;		// PID
+	int sig;		// Signal to be sent
+	uint32_t req;		// Request
 
 	// Act on a system call
 	switch (r0) {
 	case __NR_millisleep:
-	__asm__ __volatile__("str r1, %0\n\t" :"=m"(req));
+ __asm__ __volatile__("str r1, %0\n\t":"=m"(req));
 		*psp = (uint32_t) sys_millisleep(req);
 		*(psp + 1) = 0;
 		break;
 	case __NR_kill:
-	__asm__ __volatile__("str r1,%0\n\t" "str r2,%1\n\t":"=m"(pid), "=m"(sig)
-		);
+ __asm__ __volatile__("str r1,%0\n\t" "str r2,%1\n\t":"=m"(pid), "=m"(sig)
+		    );
 		*psp = (uint32_t) sys_kill(pid, sig);
 		*(psp + 1) = 0;
 		break;
