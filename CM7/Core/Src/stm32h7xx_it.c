@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "process.h"
+#include "kernel_syscalls.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,6 +35,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define SYSTICK_TIMEOUT (32)
+#define __NR_millisleep 2
+#define __NR_kill 5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -144,14 +147,34 @@ void UsageFault_Handler(void)
 /**
   * @brief This function handles System service call via SWI instruction.
   */
+// Our system call handler in kernel space
 void SVC_Handler(void)
 {
-	/* USER CODE BEGIN SVCall_IRQn 0 */
+	uint32_t *psp = (uint32_t *) __get_PSP();	// Points to R0 on exception frame
+	uint32_t register r0 asm("r0");	// syscall number
+	pid_t pid;		// PID
+	int sig;		// Signal to be sent
+	uint32_t req;		// Request
 
-	/* USER CODE END SVCall_IRQn 0 */
-	/* USER CODE BEGIN SVCall_IRQn 1 */
-
-	/* USER CODE END SVCall_IRQn 1 */
+	// Act on a system call
+	switch (r0) {
+	case __NR_millisleep:
+ __asm__ __volatile__("str r1, %0\n\t":"=m"(req));
+		*psp = (uint32_t) sys_millisleep(req);
+		*(psp + 1) = 0;
+		break;
+	case __NR_kill:
+ __asm__ __volatile__("str r1,%0\n\t" "str r2,%1\n\t":"=m"(pid), "=m"(sig)
+		    );
+		*psp = (uint32_t) sys_kill(pid, sig);
+		*(psp + 1) = 0;
+		break;
+	default:
+		*psp = -1;
+		*(psp + 1) = -22;
+		break;
+	}
+	return;
 }
 
 /**
