@@ -86,6 +86,30 @@ void MX_GPIO_Init(void)
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 	HAL_GPIO_Init(TFT_RST_GPIO_Port, &GPIO_InitStruct);
 
+	// D0
+	HAL_GPIO_WritePin(D0_GPIO_Port, D0_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = D0_Pin;
+	HAL_GPIO_Init(D0_GPIO_Port, &GPIO_InitStruct);
+
+	// D1
+	HAL_GPIO_WritePin(D1_GPIO_Port, D1_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = D1_Pin;
+	HAL_GPIO_Init(D1_GPIO_Port, &GPIO_InitStruct);
+
+	// D2
+	HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = D2_Pin;
+	HAL_GPIO_Init(D2_GPIO_Port, &GPIO_InitStruct);
+
+	// D3
+	HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_RESET);
+
+	GPIO_InitStruct.Pin = D3_Pin;
+	HAL_GPIO_Init(D3_GPIO_Port, &GPIO_InitStruct);
+
 	// B1
 	GPIO_InitStruct.Pin = B1_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;

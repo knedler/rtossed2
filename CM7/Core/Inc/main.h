@@ -73,6 +73,14 @@ extern "C" {
 #define TFT_RST_GPIO_Port GPIOD
 #define TFT_DC_Pin GPIO_PIN_1
 #define TFT_DC_GPIO_Port GPIOD
+#define D0_Pin GPIO_PIN_2
+#define D0_GPIO_Port GPIOD
+#define D1_Pin GPIO_PIN_3
+#define D1_GPIO_Port GPIOD
+#define D2_Pin GPIO_PIN_4
+#define D2_GPIO_Port GPIOD
+#define D3_Pin GPIO_PIN_5
+#define D3_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 
