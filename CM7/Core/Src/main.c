@@ -141,6 +141,8 @@ int main(void)
 
 	/* Configure the system clock */
 	SystemClock_Config();
+
+	//counter = 0;
 	/* USER CODE BEGIN Boot_Mode_Sequence_2 */
 	/* When system initialization is finished, Cortex-M7 will release
 	 * Cortex-M4 by means of HSEM notification
@@ -172,7 +174,6 @@ int main(void)
 	MX_USART3_UART_Init();
 	MX_DMA2D_Init();
 	MX_QUADSPI_Init();
-	MX_TIM15_Init();
 	MX_USB_DEVICE_Init();
 	/* USER CODE BEGIN 2 */
 
