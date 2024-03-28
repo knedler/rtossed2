@@ -142,7 +142,8 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	//counter = 0;
+	// Init to 0
+	counter = 0;
 	/* USER CODE BEGIN Boot_Mode_Sequence_2 */
 	/* When system initialization is finished, Cortex-M7 will release
 	 * Cortex-M4 by means of HSEM notification
@@ -203,17 +204,22 @@ int main(void)
 
 	init_process_table();
 
-	//kready = TRUE;
-
 	while (1) {
 		//HAL_Delay(50);
 		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+
+		// Take SEM
+		while(HAL_HSEM_Take(HSEM_ID_0, 0) != HAL_OK);
 
 		for (uint32_t i = 0; i < 100000000; i++) {
 			counter++;
 		}
 
+		// Print value
 		printf("CM7: %lld\r\n", counter);
+
+		// Release SEM
+		HAL_HSEM_Release(HSEM_ID_0, 0);
 	}
 }
 
