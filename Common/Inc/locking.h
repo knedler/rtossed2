@@ -4,6 +4,6 @@
 
 #include <stdint.h>
 
-extern volatile uint64_t counter __attribute__ (( section(".axi") ));
+extern volatile uint64_t counter __attribute__((section(".axi")));
 
-#endif // LOCKING_H
+#endif				// LOCKING_H

@@ -50,7 +50,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern volatile uint64_t counter __attribute__ (( section(".axi") ));
+extern volatile uint64_t counter __attribute__((section(".axi")));
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,7 +107,7 @@ int main(void)
 	/* USER CODE BEGIN 2 */
 
 	// Draw rect
-	frame_buffer_fillRect(35,35,25,25, 0xFFFF);
+	frame_buffer_fillRect(35, 35, 25, 25, 0xFFFF);
 
 	/* USER CODE END 2 */
 
@@ -119,7 +119,7 @@ int main(void)
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
 		// Take SEM
-		while(HAL_HSEM_Take(HSEM_ID_0, 0) != HAL_OK);
+		while (HAL_HSEM_Take(HSEM_ID_0, 0) != HAL_OK) ;
 
 		for (uint16_t i = 0; i < 10000; i++) {
 			counter++;

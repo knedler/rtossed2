@@ -84,7 +84,7 @@ volatile uint8_t kready = FALSE;
 extern const uint32_t _eustack[];
 
 // Declare global var
-extern volatile uint64_t counter __attribute__ (( section(".axi") ));
+extern volatile uint64_t counter __attribute__((section(".axi")));
 
 /* USER CODE END PV */
 
@@ -209,7 +209,7 @@ int main(void)
 		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 
 		// Take SEM
-		while(HAL_HSEM_Take(HSEM_ID_0, 0) != HAL_OK);
+		while (HAL_HSEM_Take(HSEM_ID_0, 0) != HAL_OK) ;
 
 		for (uint32_t i = 0; i < 100000000; i++) {
 			counter++;
